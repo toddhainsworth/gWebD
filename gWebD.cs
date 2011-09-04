@@ -35,10 +35,10 @@ namespace gWebD
 			}
 		}
 
-		public string GetTheDefaultFileName(string sLocalDirectory)
+		public string GetTheDefaultFileName(string localDirectory)
 		{
 			StreamReader reader;
-			String sLine = "";
+			String line = "";
 
 			try
 			{
@@ -46,10 +46,10 @@ namespace gWebD
 				// of default file
 				reader = new StreamReader("Data/Default.dat");
 
-				while ((sLine = reader.ReadLine()) != null)
+				while ((line = reader.ReadLine()) != null)
 				{
 					//Look for the default file in the web server root folder
-					if (File.Exists( sLocalDirectory + sLine) == true)
+					if (File.Exists( localDirectory + line) == true)
 						break;
 				}
 			}
@@ -57,51 +57,51 @@ namespace gWebD
 			{
 				Console.WriteLine("An error occured when getting default filename, check directory.");
 			}
-			if (File.Exists( sLocalDirectory + sLine) == true) {
-				return sLine;
+			if (File.Exists( localDirectory + line) == true) {
+				return line;
 			}
 			else {
 				return "";
 			}
 		}
 
-		public string GetMimeType(string sRequestedFile)
+		public string GetMimeType(string requestedFile)
 		{
 			StreamReader reader;
-			String sLine = "";
-			String sMimeType = "";
-			String sFileExt = "";
-			String sMimeExt = "";
+			String line = "";
+			String mimeType = "";
+			String fileExt = "";
+			String mimeExt = "";
 			
 			// Convert to lowercase
-			sRequestedFile = sRequestedFile.ToLower();
+			requestedFile = requestedFile.ToLower();
 			
-			int iStartPos = sRequestedFile.IndexOf(".");
+			int startPos = requestedFile.IndexOf(".");
 
-			sFileExt = sRequestedFile.Substring(iStartPos);
+			fileExt = requestedFile.Substring(startPos);
 			
 			try
 			{
 				//Open the Vdirs.dat to find out the list virtual directories
 				reader = new StreamReader("Data/Mime.dat");
 
-				while ((sLine = reader.ReadLine()) != null)
+				while ((line = reader.ReadLine()) != null)
 				{
 
-					sLine.Trim();
+					line.Trim();
 
-					if (sLine.Length > 0)
+					if (line.Length > 0)
 					{
 						//find the separator
-						iStartPos = sLine.IndexOf(";");
+						startPos = line.IndexOf(";");
 						
 						// Convert to lower case
-						sLine = sLine.ToLower();
+						line = line.ToLower();
 						
-						sMimeExt = sLine.Substring(0,iStartPos);
-						sMimeType = sLine.Substring(iStartPos + 1);
+						mimeExt = line.Substring(0,startPos);
+						mimeType = line.Substring(startPos + 1);
 						
-						if (sMimeExt == sFileExt) {
+						if (mimeExt == fileExt) {
 							break;
 						}
 					}
@@ -113,33 +113,33 @@ namespace gWebD
 				Console.WriteLine(e.ToString());
 			}
 
-			if (sMimeExt == sFileExt) {
-				return sMimeType; 
+			if (mimeExt == fileExt) {
+				return mimeType; 
 			}
 			else {
 				return "";
 			}
 		}
 
-		public string GetLocalPath(string sMyWebServerRoot, string sDirName)
+		public string GetLocalPath(string serverRoot, string dirName)
 		{
 			StreamReader reader;
-			String sLine = "";
-			String sVirtualDir = ""; 
-			String sRealDir = "";
-			int iStartPos = 0;
+			String line = "";
+			String virtDir = ""; 
+			String realDir = "";
+			int startPos = 0;
 			
 			//Remove extra spaces
-			sDirName.Trim();
+			dirName.Trim();
 			
 			// Convert to lowercase
-			sMyWebServerRoot = sMyWebServerRoot.ToLower();
+			serverRoot = serverRoot.ToLower();
 			
 			// Convert to lowercase
-			sDirName = sDirName.ToLower();
+			dirName = dirName.ToLower();
 
 			//Remove the slash
-			//sDirName = sDirName.Substring(1, sDirName.Length - 2);
+			//dirName = dirName.Substring(1, dirName.Length - 2);
 
 
 			try
@@ -147,23 +147,23 @@ namespace gWebD
 				//Open the Vdirs.dat to find out the list virtual directories
 				reader = new StreamReader("Data/VDirs.dat");
 
-				while ((sLine = reader.ReadLine()) != null)
+				while ((line = reader.ReadLine()) != null)
 				{
 					//Remove extra Spaces
-					sLine.Trim();
+					line.Trim();
 
-					if (sLine.Length > 0)
+					if (line.Length > 0)
 					{
 						//find the separator
-						iStartPos = sLine.IndexOf(";");
+						startPos = line.IndexOf(";");
 						
 						// Convert to lowercase
-						sLine = sLine.ToLower();
+						line = line.ToLower();
 						
-						sVirtualDir = sLine.Substring(0,iStartPos);
-						sRealDir = sLine.Substring(iStartPos + 1);
+						virtDir = line.Substring(0,startPos);
+						realDir = line.Substring(startPos + 1);
 						
-						if (sVirtualDir == sDirName)
+						if (virtDir == dirName)
 						{
 							break;
 						}
@@ -176,48 +176,48 @@ namespace gWebD
 			}
 
 
-			Console.WriteLine("Virtual Dir : " + sVirtualDir);
-			Console.WriteLine("Directory   : " + sDirName);
-			Console.WriteLine("Physical Dir: " + sRealDir);
-			if (sVirtualDir == sDirName) {
-				return sRealDir;
+			Console.WriteLine("Virtual Dir : " + virtDir);
+			Console.WriteLine("Directory   : " + dirName);
+			Console.WriteLine("Physical Dir: " + realDir);
+			if (virtDir == dirName) {
+				return realDir;
 			}
 			else {
 				return "";
 			}
 		}
 		
-		public void SendHeader(string sHttpVersion, string sMIMEHeader, int iTotBytes, string sStatusCode, ref Socket webSocket)
+		public void SendHeader(string httpVer, string mimeHead, int totBytes, string statusCode, ref Socket webSocket)
 		{
 
-			String sBuffer = "";
+			String buffer = "";
 			
 			// if Mime type is not provided set default to text/html
-			if (sMIMEHeader.Length == 0 )
+			if (mimeHead.Length == 0 )
 			{
-				sMIMEHeader = "text/html";  // Default Mime Type is text/html
+				mimeHead = "text/html";  // Default Mime Type is text/html
 			}
 
-			sBuffer = sBuffer + sHttpVersion + sStatusCode + "\r\n";
-			sBuffer = sBuffer + "Server: cx1193719-b\r\n";
-			sBuffer = sBuffer + "Content-Type: " + sMIMEHeader + "\r\n";
-			sBuffer = sBuffer + "Accept-Ranges: bytes\r\n";
-			sBuffer = sBuffer + "Content-Length: " + iTotBytes + "\r\n\r\n";
+			buffer = buffer + httpVer + statusCode + "\r\n";
+			buffer = buffer + "Server: cx1193719-b\r\n";
+			buffer = buffer + "Content-Type: " + mimeHead + "\r\n";
+			buffer = buffer + "Accept-Ranges: bytes\r\n";
+			buffer = buffer + "Content-Length: " + totBytes + "\r\n\r\n";
 			
-			Byte[] bSendData = Encoding.ASCII.GetBytes(sBuffer); 
+			Byte[] sendData = Encoding.ASCII.GetBytes(buffer); 
 
-			SendToBrowser( bSendData, ref webSocket);
+			SendToBrowser( sendData, ref webSocket);
 
-			Console.WriteLine("Total Bytes : " + iTotBytes.ToString());
+			Console.WriteLine("Total Bytes : " + totBytes.ToString());
 
 		}
 
-		public void SendToBrowser(String sData, ref Socket webSocket)
+		public void SendToBrowser(String data, ref Socket webSocket)
 		{
-			SendToBrowser (Encoding.ASCII.GetBytes(sData), ref webSocket);
+			SendToBrowser (Encoding.ASCII.GetBytes(data), ref webSocket);
 		}
 
-		public void SendToBrowser(Byte[] bSendData, ref Socket webSocket)
+		public void SendToBrowser(Byte[] sendData, ref Socket webSocket)
 		{
 			int numBytes = 0;
 			
@@ -225,7 +225,7 @@ namespace gWebD
 			{
 				if (webSocket.Connected)
 				{
-					if (( numBytes = webSocket.Send(bSendData, bSendData.Length,0)) == -1)
+					if (( numBytes = webSocket.Send(sendData, sendData.Length,0)) == -1)
 						Console.WriteLine("Socket Error cannot Send Packet");
 					else
 					{
@@ -252,16 +252,16 @@ namespace gWebD
 		public void StartListen()
 		{
 
-			int iStartPos = 0;
-			String sRequest;
-			String sDirName;
-			String sRequestedFile;
-			String sErrorMessage;
-			String sLocalDir;
-			String sMyWebServerRoot = "../Sites/";
-			String sPhysicalFilePath = "";
-			String sFormattedMessage = "";
-			String sResponse = "";
+			int startPos = 0;
+			String Request;
+			String dirName;
+			String requestedFile;
+			String ErrorMessage;
+			String LocalDir;
+			String serverRoot = "../Sites/";
+			String PhysicalFilePath = "";
+			String FormattedMessage = "";
+			String Response = "";
 			
 			
 			
@@ -276,13 +276,13 @@ namespace gWebD
 					Console.WriteLine("\nClient Connected!!\n==================\nClient IP {0}\n", webSocket.RemoteEndPoint) ;
 
 					//make a byte array and receive data from the client 
-					Byte[] bReceive = new Byte[1024] ;
-					int i = webSocket.Receive(bReceive,bReceive.Length,0) ;
+					Byte[] recieve = new Byte[1024] ;
+					int i = webSocket.Receive(recieve,recieve.Length,0) ;
 					//Convert Byte to String
-					string sBuffer = Encoding.ASCII.GetString(bReceive);
+					string buffer = Encoding.ASCII.GetString(recieve);
 					
 					//At present we will only deal with GET type
-					if (sBuffer.Substring(0,3) != "GET" )
+					if (buffer.Substring(0,3) != "GET" )
 					{
 						Console.WriteLine("Only Get Method is supported..");
 						webSocket.Close();
@@ -291,67 +291,67 @@ namespace gWebD
 
 					
 					// Look for HTTP request
-					iStartPos = sBuffer.IndexOf("HTTP",1);
+					startPos = buffer.IndexOf("HTTP",1);
 
 
 					// Get the HTTP text and version e.g. it will return "HTTP/1.1"
-					string sHttpVersion = sBuffer.Substring(iStartPos,8);
+					string httpVer = buffer.Substring(startPos,8);
         
 					        					
 					// Extract the Requested Type and Requested file/directory
-					sRequest = sBuffer.Substring(0,iStartPos - 1);
+					Request = buffer.Substring(0,startPos - 1);
         
 										
 					//Replace backslash with Forward Slash, if Any
-					sRequest.Replace("\\","/");
+					Request.Replace("\\","/");
 
 
 					//If file name is not supplied add forward slash to indicate 
 					//that it is a directory and then we will look for the 
 					//default file name..
-					if ((sRequest.IndexOf(".") <1) && (!sRequest.EndsWith("/")))
+					if ((Request.IndexOf(".") <1) && (!Request.EndsWith("/")))
 					{
-						sRequest = sRequest + "/"; 
+						Request = Request + "/"; 
 					}
 
 
 					//Extract the requested file name
-					iStartPos = sRequest.LastIndexOf("/") + 1;
-					sRequestedFile = sRequest.Substring(iStartPos);
+					startPos = Request.LastIndexOf("/") + 1;
+					requestedFile = Request.Substring(startPos);
 
 					
 					//Extract The directory Name
-					sDirName = sRequest.Substring(sRequest.IndexOf("/"), sRequest.LastIndexOf("/")-3);
+					dirName = Request.Substring(Request.IndexOf("/"), Request.LastIndexOf("/")-3);
 					
 						
 					
 					/////////////////////////////////////////////////////////////////////
 					// Identify the Physical Directory
 					/////////////////////////////////////////////////////////////////////
-					if ( sDirName == "/") {
-						sLocalDir = sMyWebServerRoot;
+					if ( dirName == "/") {
+						LocalDir = serverRoot;
 					}
 					else
 					{
 						//Get the Virtual Directory
-						sLocalDir = GetLocalPath(sMyWebServerRoot, sDirName);
+						LocalDir = GetLocalPath(serverRoot, dirName);
 					}
 
 
-					Console.WriteLine("Directory Requested : " +  sLocalDir);
+					Console.WriteLine("Directory Requested : " +  LocalDir);
 
 					//If the physical directory does not exists then
 					// dispaly the error message
-					if (sLocalDir.Length == 0 )
+					if (LocalDir.Length == 0 )
 					{
-						sErrorMessage = "<H2>Error!! Requested Directory does not exists</H2><Br>";
-						//sErrorMessage = sErrorMessage + "Please check data\\Vdirs.Dat";
+						ErrorMessage = "<H2>Error!! Requested Directory does not exists</H2><Br>";
+						//ErrorMessage = ErrorMessage + "Please check data\\Vdirs.Dat";
 
 						//Format The Message
-						SendHeader(sHttpVersion,  "", sErrorMessage.Length, " 404 Not Found", ref webSocket);
+						SendHeader(httpVer,  "", ErrorMessage.Length, " 404 Not Found", ref webSocket);
 
 						//Send to the browser
-						SendToBrowser(sErrorMessage, ref webSocket);
+						SendToBrowser(ErrorMessage, ref webSocket);
 
 						webSocket.Close();
 
@@ -364,16 +364,16 @@ namespace gWebD
 					/////////////////////////////////////////////////////////////////////
 
 					//If The file name is not supplied then look in the default file list
-					if (sRequestedFile.Length == 0 )
+					if (requestedFile.Length == 0 )
 					{
 						// Get the default filename
-						sRequestedFile = GetTheDefaultFileName(sLocalDir);
+						requestedFile = GetTheDefaultFileName(LocalDir);
 
-						if (sRequestedFile == "")
+						if (requestedFile == "")
 						{
-							sErrorMessage = "<H2>Error!! No Default File Name Specified</H2>";
-							SendHeader(sHttpVersion,  "", sErrorMessage.Length, " 404 Not Found", ref webSocket);
-							SendToBrowser ( sErrorMessage, ref webSocket);
+							ErrorMessage = "<H2>Error!! No Default File Name Specified</H2>";
+							SendHeader(httpVer,  "", ErrorMessage.Length, " 404 Not Found", ref webSocket);
+							SendToBrowser ( ErrorMessage, ref webSocket);
 
 							webSocket.Close();
 
@@ -389,28 +389,28 @@ namespace gWebD
 					// Get TheMime Type
 					/////////////////////////////////////////////////////////////////////
 					
-					String sMimeType = GetMimeType(sRequestedFile);
+					String mimeType = GetMimeType(requestedFile);
 
 					//Build the physical path
-					sPhysicalFilePath = sLocalDir + sRequestedFile;
-					Console.WriteLine("File Requested : " +  sPhysicalFilePath);					
+					PhysicalFilePath = LocalDir + requestedFile;
+					Console.WriteLine("File Requested : " +  PhysicalFilePath);					
 					
-					if (File.Exists(sPhysicalFilePath) == false)
+					if (File.Exists(PhysicalFilePath) == false)
 					{
-						sErrorMessage = "<H2>404 Error! File Does Not Exists...</H2>";
-						SendHeader(sHttpVersion, "", sErrorMessage.Length, " 404 Not Found", ref webSocket);
-						SendToBrowser( sErrorMessage, ref webSocket);
+						ErrorMessage = "<H2>404 Error! File Does Not Exists...</H2>";
+						SendHeader(httpVer, "", ErrorMessage.Length, " 404 Not Found", ref webSocket);
+						SendToBrowser( ErrorMessage, ref webSocket);
 
-						Console.WriteLine(sFormattedMessage);
+						Console.WriteLine(FormattedMessage);
 					}
 				
 					else
 					{
-						int iTotBytes=0;
+						int totBytes=0;
 
-						sResponse ="";
+						Response ="";
 
-						FileStream fileStream = new FileStream(sPhysicalFilePath, FileMode.Open, 	FileAccess.Read, FileShare.Read);
+						FileStream fileStream = new FileStream(PhysicalFilePath, FileMode.Open, 	FileAccess.Read, FileShare.Read);
 						// Create a reader that can read bytes from the FileStream.
 
 						
@@ -420,14 +420,14 @@ namespace gWebD
 						while((read = reader.Read(bytes, 0, bytes.Length)) != 0) 
 						{
 							// Read from the file and write the data to the network
-							sResponse = sResponse + Encoding.ASCII.GetString(bytes,0,read);
+							Response = Response + Encoding.ASCII.GetString(bytes,0,read);
 
-							iTotBytes = iTotBytes + read;
+							totBytes = totBytes + read;
 						}
 						reader.Close(); 
 						fileStream.Close();
 
-						SendHeader(sHttpVersion,  sMimeType, iTotBytes, " 200 OK", ref webSocket);
+						SendHeader(httpVer,  mimeType, totBytes, " 200 OK", ref webSocket);
 
 						SendToBrowser(bytes, ref webSocket);
 						
