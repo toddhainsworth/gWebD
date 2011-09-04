@@ -1,0 +1,19 @@
+gWebD is a small WebServer based off of the sources available at
+http://www.codeproject.com/KB/IP/mywebserver.aspx
+
+gWeb has been tested to run on Ubuntu Linux, it will need to be
+tested on Windows to ensure that all features work. The directories
+in the code point to directories used by the Linux Kernel and the ext4
+filesystem.
+
+You will need to have the folder structure like this:
+
+gWebD
+   |
+   |-----Sites // you will need to create this folder.
+   |
+   |-----APP // The folder with the application in it.
+          |
+          |-----Data // This contains important files that allow the server to function.
+          |
+          |-----gWebD.exe // The main application
