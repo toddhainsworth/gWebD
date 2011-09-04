@@ -21,8 +21,7 @@ namespace gWebD
 			try
 			{
 				// Listens
-				webListener = new TcpListener(port); // This is an older method so you will
-													 // get a warning from the compiler.
+				webListener = new TcpListener(port); // This is an old method, will be changed later.
 				webListener.Start();
 				Console.WriteLine("gWebD {0} is Running on port {1}... Press ^C to Stop...", VERSION, port);
 				//start the thread which calls the method 'StartListen'
@@ -84,7 +83,7 @@ namespace gWebD
 			try
 			{
 				//Open the Vdirs.dat to find out the list virtual directories
-				reader = new StreamReader("Data/Mime.Dat");
+				reader = new StreamReader("Data/Mime.dat");
 
 				while ((sLine = reader.ReadLine()) != null)
 				{
@@ -111,6 +110,7 @@ namespace gWebD
 			catch (Exception e)
 			{
 				Console.WriteLine("An error occured whilst checking MIME type!");
+				Console.WriteLine(e.ToString());
 			}
 
 			if (sMimeExt == sFileExt) {
@@ -145,7 +145,7 @@ namespace gWebD
 			try
 			{
 				//Open the Vdirs.dat to find out the list virtual directories
-				reader = new StreamReader("Data/VDirs.Dat");
+				reader = new StreamReader("Data/VDirs.dat");
 
 				while ((sLine = reader.ReadLine()) != null)
 				{
