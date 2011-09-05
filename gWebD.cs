@@ -5,6 +5,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
+/* gWeb is a hobby Web Server made for personal and not commercial use */
+
 namespace gWebD
 {
 	class gWebD 
