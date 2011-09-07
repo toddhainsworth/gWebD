@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Net.NetworkInformation;
 
 /* gWeb is a hobby Web Server made for personal and not commercial use */
 
@@ -20,20 +21,24 @@ namespace gWebD
 		// client that connects.
 		public gWebD()
 		{
-			try
-			{
-				// Listens
-				webListener = new TcpListener(port); // This is an old method, will be changed later.
-				webListener.Start();
-				Console.WriteLine("gWebD {0} is Running on port {1}... Press ^C to Stop...", VERSION, port);
-				//start the thread which calls the method 'StartListen'
-				Thread mainThread = new Thread(new ThreadStart(StartListen));
-				mainThread.Start() ;
+			try {
+				if (portAvailable(port))
+				{
+					// Listens
+					webListener = new TcpListener(port); // This is an old method, will be changed later.
+					webListener.Start();
+					Console.WriteLine("gWebD {0} is Running on port {1}... Press ^C to Stop...", VERSION, port);
+					//start the thread which calls the method 'StartListen'
+					Thread mainThread = new Thread(new ThreadStart(StartListen));
+					mainThread.Start() ;
 
-			}
-			catch(Exception e)
-			{
-				Console.WriteLine("Unable to start, is a firewall blocking connections?");
+				}
+				else
+				{
+					Console.WriteLine("Unable to start, is the port being used?");
+				}
+			} catch {
+				Console.WriteLine("You cannot run a duplicate server!");	
 			}
 		}
 
@@ -249,6 +254,27 @@ namespace gWebD
 		public static void Main() 
 		{
 			gWebD Server = new gWebD();
+		}
+		
+		public bool portAvailable(int port) {
+			bool isAvailable = true;
+			IPGlobalProperties globalProp = IPGlobalProperties.GetIPGlobalProperties();
+			TcpConnectionInformation[] confInfo = globalProp.GetActiveTcpConnections();
+			
+			foreach (TcpConnectionInformation tcpi in confInfo)
+			{
+				if(tcpi.LocalEndPoint.Port == port)
+				{
+					isAvailable = false;
+					break;
+				}
+				else
+				{
+					isAvailable = true;
+					break;
+				}
+			}
+			return isAvailable;
 		}
 
 		public void StartListen()
