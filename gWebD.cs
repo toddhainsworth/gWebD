@@ -4,7 +4,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Net.NetworkInformation;
+using System.Net.NetworkInformation; 
+
+// Version from school 9/9/2011 12:14pm
 
 /* gWeb is a hobby Web Server made for personal and not commercial use */
 
